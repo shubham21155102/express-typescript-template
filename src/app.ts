@@ -1,16 +1,21 @@
+import 'reflect-metadata';
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { Routes } from './routes';
-
+import { DatabaseService } from './config/database';
+import dotenv from 'dotenv';
+dotenv.config();
 export class App {
   public app: Application;
   private routes: Routes;
+  private database: DatabaseService;
 
   constructor() {
     this.app = express();
     this.routes = new Routes();
+    this.database = DatabaseService.getInstance();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
@@ -47,7 +52,9 @@ export class App {
         message: 'Express TypeScript Template API',
         version: '1.0.0',
         endpoints: {
-          health: '/api/health'
+          health: '/api/health',
+          users: '/api/users',
+          userStats: '/api/users/stats'
         }
       });
     });
@@ -79,12 +86,33 @@ export class App {
   }
 
   /**
+   * Initialize database connection
+   */
+  public async initializeDatabase(): Promise<void> {
+    try {
+      await this.database.initialize();
+    } catch (error) {
+      console.error('Failed to initialize database:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Start the Express server
    */
-  public listen(port: number): void {
-    this.app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port}`);
-      console.log(`📊 Health check available at: http://localhost:${port}/api/health`);
-    });
+  public async listen(port: number): Promise<void> {
+    try {
+      // Initialize database connection first
+      await this.initializeDatabase();
+      
+      this.app.listen(port, () => {
+        console.log(`🚀 Server running on port ${port}`);
+        console.log(`📊 Health check available at: http://localhost:${port}/api/health`);
+        console.log(`👥 User API available at: http://localhost:${port}/api/users`);
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
   }
 }

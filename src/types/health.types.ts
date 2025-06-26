@@ -3,4 +3,8 @@ export interface HealthResponse {
   timestamp: string;
   uptime: number;
   environment: string;
+  database?: {
+    connected: boolean;
+    type: string;
+  };
 }

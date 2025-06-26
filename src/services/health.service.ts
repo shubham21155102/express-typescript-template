@@ -1,4 +1,5 @@
 import { HealthResponse } from '../types/health.types';
+import { DatabaseService } from '../config/database';
 
 export class HealthService {
   /**
@@ -6,11 +7,17 @@ export class HealthService {
    * @returns {HealthResponse} Health status information
    */
   public getHealthStatus(): HealthResponse {
+    const database = DatabaseService.getInstance();
+    
     return {
       status: 'OK',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
+      database: {
+        connected: database.isConnected(),
+        type: 'postgresql'
+      }
     };
   }
 
@@ -19,7 +26,14 @@ export class HealthService {
    * @returns {boolean} True if healthy, false otherwise
    */
   public isHealthy(): boolean {
-    // Add your health checks here (database connection, external services, etc.)
+    const database = DatabaseService.getInstance();
+    
+    // Check database connection
+    if (!database.isConnected()) {
+      return false;
+    }
+    
+    // Add other health checks here (external services, etc.)
     return true;
   }
 }

@@ -3,10 +3,10 @@ global:
 
 scrape_configs:
   - job_name: prometheus
-    scheme: https
+    # scheme: https
     basic_auth:
       username: shubham
       password: shubham123!
     static_configs:
       - targets:
-        - 3000-shubham2115-expresstype-ky9k5tzayzx.ws-us120.gitpod.io
+        - 13.126.235.56:8000

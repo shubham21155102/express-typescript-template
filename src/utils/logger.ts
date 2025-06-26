@@ -3,8 +3,8 @@ import LokiTransport from 'winston-loki';
 
 const options = {
    transports: new LokiTransport({
-    // host:"https://3100-shubham2115-expresstype-ky9k5tzayzx.ws-us120.gitpod.io",
-    host:"http://13.126.235.56:3001",
+    host:`http://${process.env.SERVER_IP}:3100`,
+   //  host:"http://13.126.235.56:3001",
     labels: { job: 'express-app' },
    })
 }

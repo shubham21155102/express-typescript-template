@@ -9,4 +9,4 @@ scrape_configs:
       password: shubham123!
     static_configs:
       - targets:
-        - shiner-enjoyed-stinkbug.ngrok-free.app
+        - 3000-shubham2115-expresstype-ky9k5tzayzx.ws-us120.gitpod.io

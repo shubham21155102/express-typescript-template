@@ -33,4 +33,7 @@ services:
 
 
 docker run -d -p 3000:3000 --name=grafana grafana/grafana-oss
+docker run -d -p 3001:3000 --name=grafana grafana/grafana-oss
 
+# https://grafana.com/grafana/dashboards/11159-nodejs-application-dashboard/
+# 11159

@@ -8,6 +8,14 @@ const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({
     register: client.register // Register the default metrics with the global registry
 })
+const reqTimer = new client.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'Duration of HTTP requests in seconds',
+    labelNames: ['method', 'route', 'status'],
+    buckets: [0.1, 0.5, 1, 2, 5, 10] // Buckets for the histogram
+});
+// Register the histogram with the global registry
+client.register.registerMetric(reqTimer);
 export class App {
   public app: Application;
   private routes: Routes;

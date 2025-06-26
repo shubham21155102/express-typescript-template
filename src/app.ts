@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import responseTime from "response-time"
 import morgan from 'morgan';
 import { Routes } from './routes';
 import client from "prom-client"
@@ -14,8 +15,14 @@ const reqTimer = new client.Histogram({
     labelNames: ['method', 'route', 'status'],
     buckets: [0.1, 0.5, 1, 2, 5, 10] // Buckets for the histogram
 });
+const totalRequests = new client.Counter({
+    name: 'http_requests_total',
+    help: 'Total number of HTTP requests',
+    labelNames: ['method', 'route', 'status']       
+});
 // Register the histogram with the global registry
 client.register.registerMetric(reqTimer);
+client.register.registerMetric(totalRequests);
 export class App {
   public app: Application;
   private routes: Routes;
@@ -44,6 +51,11 @@ export class App {
     // Body parsing middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(responseTime((req: Request, res: Response, time: number) => {
+      totalRequests.inc();
+      // Record the request duration in the Prometheus histogram
+      reqTimer.labels(req.method, (req.route?.path as string) || 'unknown', res.statusCode.toString(),).observe(time / 1000);
+    }));
   }
 
   /**

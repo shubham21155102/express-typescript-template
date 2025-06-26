@@ -5,7 +5,9 @@ import responseTime from "response-time"
 import morgan from 'morgan';
 import { Routes } from './routes';
 import client from "prom-client"
+import { logger } from './utils';
 const collectDefaultMetrics = client.collectDefaultMetrics;
+
 collectDefaultMetrics({
     register: client.register // Register the default metrics with the global registry
 })
@@ -67,6 +69,7 @@ export class App {
     
     // Default route
     this.app.get('/', (req: Request, res: Response) => {
+      logger.info('Default route accessed');
       res.json({
         message: 'Express TypeScript Template API',
         version: '1.0.0',

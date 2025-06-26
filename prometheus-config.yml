@@ -3,5 +3,10 @@ global:
 
 scrape_configs:
   - job_name: prometheus
+    scheme: https
+    basic_auth:
+      username: shubham
+      password: shubham123!
     static_configs:
-      - targets: ["https://shiner-enjoyed-stinkbug.ngrok-free.app"]
+      - targets:
+        - shiner-enjoyed-stinkbug.ngrok-free.app

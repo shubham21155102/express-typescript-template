@@ -3,7 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { Routes } from './routes';
-
+import client from "prom-client"
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({
+    register: client.register // Register the default metrics with the global registry
+})
 export class App {
   public app: Application;
   private routes: Routes;
@@ -50,6 +54,16 @@ export class App {
           health: '/api/health'
         }
       });
+    });
+    // Metrics endpoint for Prometheus
+    this.app.get('/metrics', async (req: Request, res: Response) => {
+      try {
+        res.set('Content-Type', client.register.contentType);
+        res.end(await client.register.metrics());
+      } catch (error) {
+        console.error('Error generating metrics:', error);
+        res.status(500).end();
+      }
     });
   }
 

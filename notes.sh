@@ -37,3 +37,5 @@ docker run -d -p 3001:3000 --name=grafana grafana/grafana-oss
 
 # https://grafana.com/grafana/dashboards/11159-nodejs-application-dashboard/
 # 11159
+
+docker run -d --name=loki -p 3100:3100 grafana/loki
